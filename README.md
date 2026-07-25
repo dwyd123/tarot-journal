@@ -27,6 +27,11 @@ This project uses React, TypeScript, and Vite.
 
 ## Current Development Scope
 
-The first development stage provides the project foundation and a responsive
-Chinese application shell. Tarot cases, spreads, card data, images, and local
-storage will be added in later stages.
+The second development stage provides the core TypeScript types, the complete
+78-card Rider-Waite tarot data set, three built-in spread templates, and a
+lightweight data integrity check.
+
+Run `npm run check:data` to verify the card and spread data.
+
+Card selection, card components, case forms, images, and local storage will be
+added in later stages.
