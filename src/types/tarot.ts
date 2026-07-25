@@ -1,13 +1,11 @@
 /** 第一版支持的问题分类。 */
 export type CaseCategory =
   | "感情"
-  | "工作"
-  | "学业"
+  | "事业"
   | "财务"
-  | "人际"
-  | "自我探索"
-  | "寻物"
-  | "每日指引"
+  | "学业"
+  | "人际关系"
+  | "今日运势"
   | "其他";
 
 /** 案例在后续跟进中的状态。 */
@@ -66,7 +64,7 @@ export interface TarotCardDefinition {
   rank: number | CourtRank;
   /** 第一版的默认显示编号，不是所有牌组永久通用的编号。 */
   displayNumber: string;
-  /** 第一版不使用真实图片，全部为 null。 */
+  /** 当前默认牌组的牌面地址；为空时显示文字占位牌。 */
   imagePath: string | null;
 }
 
@@ -114,7 +112,7 @@ export interface TarotCaseBase {
   category?: CaseCategory;
   question: string;
   deckName?: string;
-  overallInterpretation?: string;
+  overallInterpretation: string;
   advice?: string;
   followUp?: string;
   reviewNotes?: string;

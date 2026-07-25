@@ -11,16 +11,20 @@ import { TarotCardPicker } from "./TarotCardPicker";
 interface TarotCardPickerModalProps {
   position: SpreadTemplatePosition;
   initialSelection: DemoPositionSelection;
+  personalMeaningCardIds: ReadonlySet<string>;
   onClose: () => void;
   onConfirm: (selection: DemoPositionSelection) => void;
+  onOpenPersonalMeaning: (cardId: string) => void;
 }
 
 /** 在独立弹层中完成一个牌位的选牌和正逆位选择。 */
 export function TarotCardPickerModal({
   position,
   initialSelection,
+  personalMeaningCardIds,
   onClose,
   onConfirm,
+  onOpenPersonalMeaning,
 }: TarotCardPickerModalProps) {
   const [draft, setDraft] =
     useState<DemoPositionSelection>(initialSelection);
@@ -141,7 +145,9 @@ export function TarotCardPickerModal({
 
           <TarotCardPicker
             selectedCardId={draft.cardId}
+            personalMeaningCardIds={personalMeaningCardIds}
             onSelect={handleCardSelect}
+            onOpenPersonalMeaning={onOpenPersonalMeaning}
           />
         </div>
       </section>

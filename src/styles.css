@@ -282,9 +282,15 @@ h1 {
 }
 
 .spread-template-switcher button:focus-visible,
-.spread-position:focus-visible {
+.spread-position__select:focus-visible,
+.spread-position__meaning:focus-visible {
   outline: 3px solid rgb(164 125 184 / 38%);
   outline-offset: 3px;
+}
+
+.spread-template-switcher button:disabled {
+  cursor: default;
+  opacity: 0.72;
 }
 
 .spread-template-switcher strong,
@@ -393,7 +399,8 @@ h1 {
 }
 
 .category-tab:focus-visible,
-.card-option:focus-visible,
+.card-option__select:focus-visible,
+.card-option__meaning:focus-visible,
 .segmented-control button:focus-visible {
   outline: 3px solid rgb(164 125 184 / 38%);
   outline-offset: 3px;
@@ -415,7 +422,7 @@ h1 {
   position: relative;
   display: flex;
   min-width: 0;
-  min-height: 216px;
+  min-height: 246px;
   padding: 13px 9px 11px;
   flex-direction: column;
   align-items: center;
@@ -426,7 +433,6 @@ h1 {
     linear-gradient(rgb(255 253 249 / 92%), rgb(247 241 248 / 94%)),
     #fff;
   color: #4a3d52;
-  cursor: pointer;
   text-align: center;
   box-shadow: 0 5px 14px rgb(62 44 73 / 5%);
   transition:
@@ -451,11 +457,30 @@ h1 {
   transform: translateY(-2px);
 }
 
+.card-option:focus-within {
+  border-color: rgb(109 79 127 / 48%);
+}
+
 .card-option.is-selected {
   border: 2px solid #6d4f7f;
   box-shadow:
     0 0 0 3px rgb(109 79 127 / 12%),
     0 10px 24px rgb(62 44 73 / 12%);
+}
+
+.card-option__select {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: center;
 }
 
 .card-option__face {
@@ -465,6 +490,28 @@ h1 {
   align-items: center;
   justify-content: center;
   pointer-events: none;
+}
+
+.card-option__meaning {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 32px;
+  margin-top: 7px;
+  padding: 6px 7px;
+  border: 1px solid rgb(109 79 127 / 22%);
+  border-radius: 8px;
+  background: #f3edf5;
+  color: #694f77;
+  cursor: pointer;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.card-option__meaning:hover {
+  border-color: rgb(109 79 127 / 48%);
+  background: #eadfed;
 }
 
 .card-option__face .tarot-card-face {
@@ -974,6 +1021,19 @@ h1 {
   display: flex;
   width: 28%;
   max-width: 160px;
+  padding: 0;
+  flex-direction: column;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  transform: translate(-50%, -50%);
+}
+
+.spread-position__select {
+  position: relative;
+  display: flex;
+  width: 100%;
   padding: 9px 7px;
   flex-direction: column;
   align-items: center;
@@ -982,23 +1042,31 @@ h1 {
   background: transparent;
   color: inherit;
   cursor: pointer;
-  transform: translate(-50%, -50%);
   transition:
     border-color 160ms ease,
     background 160ms ease,
     box-shadow 160ms ease;
 }
 
-.spread-position:hover {
+.spread-position__select:hover {
   border-color: rgb(109 79 127 / 22%);
   background: rgb(255 253 249 / 52%);
 }
 
-.spread-position.is-active {
+.spread-position.is-active .spread-position__select {
   z-index: 2;
   border: 2px solid #6d4f7f;
   background: rgb(248 241 249 / 88%);
   box-shadow: 0 0 0 4px rgb(109 79 127 / 11%);
+}
+
+.spread-position__select:disabled {
+  cursor: default;
+}
+
+.spread-position__select:disabled:hover {
+  border-color: transparent;
+  background: transparent;
 }
 
 .spread-position__card {
@@ -1079,6 +1147,442 @@ h1 {
   color: #807582;
   font-size: 0.58rem;
   line-height: 1.45;
+}
+
+.spread-position__meaning {
+  position: relative;
+  z-index: 3;
+  margin-top: 5px;
+  padding: 5px 7px;
+  border: 1px solid rgb(109 79 127 / 22%);
+  border-radius: 999px;
+  background: #fffdf9;
+  color: #6a5276;
+  cursor: pointer;
+  font-size: 0.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.spread-position__meaning:hover {
+  border-color: rgb(109 79 127 / 46%);
+  background: #f1e8f3;
+}
+
+.local-library-summary {
+  display: flex;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  border: 1px solid rgb(89 67 105 / 13%);
+  border-radius: 17px;
+  background: rgb(255 253 249 / 80%);
+  box-shadow: 0 10px 28px rgb(55 40 68 / 6%);
+}
+
+.local-library-summary > div {
+  display: grid;
+  flex: 0 0 auto;
+}
+
+.local-library-summary > div span {
+  color: #827587;
+  font-size: 0.65rem;
+}
+
+.local-library-summary > div strong {
+  margin-top: 3px;
+  color: #5e436d;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.05rem;
+}
+
+.local-library-summary p {
+  margin: 0;
+  color: #716676;
+  font-size: 0.76rem;
+  line-height: 1.55;
+  text-align: right;
+}
+
+.local-library-summary p strong,
+.local-library-summary p span {
+  display: block;
+}
+
+.local-library-summary p strong {
+  color: #4f3e58;
+}
+
+.local-library-summary p span {
+  margin-top: 2px;
+  color: #8b7f8e;
+  font-size: 0.68rem;
+}
+
+.case-form-section,
+.case-form-locked,
+.case-save-success {
+  margin-top: 28px;
+  border: 1px solid rgb(89 67 105 / 14%);
+  border-radius: 24px;
+  background: rgb(255 253 249 / 90%);
+  box-shadow: 0 16px 46px rgb(55 40 68 / 7%);
+}
+
+.case-form-section {
+  padding: clamp(24px, 4vw, 40px);
+}
+
+.case-form {
+  display: grid;
+  margin-top: 24px;
+  gap: 18px;
+}
+
+.case-auto-info {
+  display: grid;
+  padding: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  border: 1px solid rgb(109 79 127 / 13%);
+  border-radius: 16px;
+  background: #f7f1f7;
+}
+
+.case-auto-info > div {
+  display: grid;
+  align-content: center;
+  padding: 10px 12px;
+  border-radius: 11px;
+  background: rgb(255 253 249 / 78%);
+}
+
+.case-auto-info > div span {
+  color: #837688;
+  font-size: 0.66rem;
+}
+
+.case-auto-info > div strong {
+  margin-top: 5px;
+  color: #54405f;
+  font-size: 0.83rem;
+}
+
+.form-field {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.form-field > span {
+  color: #5f5265;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.form-field > span b {
+  color: #9f5f67;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgb(95 75 105 / 22%);
+  border-radius: 11px;
+  background: #fffefa;
+  color: #3f3544;
+  line-height: 1.55;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.form-field input,
+.form-field select {
+  min-height: 44px;
+  padding: 9px 11px;
+}
+
+.form-field textarea {
+  padding: 11px 12px;
+  resize: vertical;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: #8c68a0;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgb(140 104 160 / 14%);
+}
+
+.form-field [aria-invalid="true"] {
+  border-color: #b66570;
+  box-shadow: 0 0 0 3px rgb(182 101 112 / 12%);
+}
+
+.optional-case-fields {
+  overflow: hidden;
+  border: 1px solid rgb(109 79 127 / 14%);
+  border-radius: 15px;
+  background: #faf7fa;
+}
+
+.optional-case-fields summary {
+  display: flex;
+  padding: 15px 16px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  color: #5d4968;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.optional-case-fields summary small {
+  color: #897c8c;
+  font-size: 0.68rem;
+  font-weight: 400;
+  text-align: right;
+}
+
+.optional-case-fields__grid {
+  display: grid;
+  padding: 0 16px 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.form-field--wide {
+  grid-column: 1 / -1;
+}
+
+.form-message {
+  margin: 0;
+  padding: 11px 13px;
+  border-radius: 10px;
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.form-message.is-error {
+  background: #f8e9eb;
+  color: #874c55;
+}
+
+.form-message.is-success {
+  background: #e8f2e9;
+  color: #4d6e54;
+}
+
+.case-form__actions,
+.personal-meaning-form__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.case-form__actions {
+  justify-content: space-between;
+}
+
+.case-form__actions p {
+  margin: 0;
+  color: #887c8b;
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.primary-action,
+.secondary-action {
+  min-height: 44px;
+  padding: 10px 17px;
+  border-radius: 11px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.primary-action {
+  border: 1px solid #6d4f7f;
+  background: #6d4f7f;
+  color: #fff;
+  box-shadow: 0 7px 18px rgb(77 52 91 / 17%);
+}
+
+.primary-action:hover {
+  background: #5f446f;
+}
+
+.secondary-action {
+  border: 1px solid rgb(109 79 127 / 24%);
+  background: #faf7fb;
+  color: #66506f;
+}
+
+.primary-action:focus-visible,
+.secondary-action:focus-visible {
+  outline: 3px solid rgb(164 125 184 / 38%);
+  outline-offset: 3px;
+}
+
+.case-form-locked {
+  display: flex;
+  padding: 22px 26px;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: #796b7d;
+  text-align: center;
+}
+
+.case-form-locked > span {
+  color: #9a78a9;
+  font-size: 1.2rem;
+}
+
+.case-form-locked strong {
+  color: #55445e;
+}
+
+.case-form-locked p {
+  margin: 4px 0 0;
+  font-size: 0.74rem;
+}
+
+.case-save-success {
+  display: grid;
+  padding: 24px 28px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  border-color: rgb(87 126 96 / 22%);
+  background: #f5faf5;
+}
+
+.case-save-success__mark {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 50%;
+  background: #66836c;
+  color: #fff;
+  font-weight: 800;
+}
+
+.case-save-success h2 {
+  margin: 0;
+  color: #3f5644;
+  font-family: "Songti SC", SimSun, Georgia, serif;
+  font-size: clamp(1.25rem, 3vw, 1.7rem);
+}
+
+.case-save-success > div > p:last-child {
+  margin: 6px 0 0;
+  color: #718075;
+  font-size: 0.74rem;
+}
+
+.personal-meaning-backdrop {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background: rgb(34 25 40 / 68%);
+  backdrop-filter: blur(6px);
+}
+
+.personal-meaning-modal {
+  display: grid;
+  width: min(960px, calc(100vw - 48px));
+  max-width: 100%;
+  max-height: calc(100vh - 48px);
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 38%);
+  border-radius: 24px;
+  background: #fffdf9;
+  box-shadow: 0 32px 90px rgb(25 16 30 / 34%);
+}
+
+.personal-meaning-modal__header {
+  display: flex;
+  padding: 20px 24px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid rgb(109 79 127 / 14%);
+  background: #faf6fb;
+}
+
+.personal-meaning-modal__header h2 {
+  margin: 0;
+  color: #372c40;
+  font-family: "Songti SC", SimSun, Georgia, serif;
+  font-size: clamp(1.35rem, 3vw, 1.9rem);
+  font-weight: 600;
+}
+
+.personal-meaning-modal__header > div > p:last-child {
+  margin: 7px 0 0;
+  color: #766a79;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.personal-meaning-form {
+  display: grid;
+  min-height: 0;
+  padding: 22px 24px 24px;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 24px;
+  overflow-y: auto;
+}
+
+.personal-meaning-card {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-self: start;
+  padding: 18px;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgb(109 79 127 / 14%);
+  border-radius: 17px;
+  background: #f5eff6;
+  text-align: center;
+}
+
+.personal-meaning-card .tarot-card-face {
+  width: 145px;
+}
+
+.personal-meaning-card strong {
+  margin-top: 14px;
+  color: #493851;
+  font-family: "Songti SC", SimSun, Georgia, serif;
+  font-size: 1.12rem;
+}
+
+.personal-meaning-card > span {
+  margin-top: 3px;
+  color: #7f7184;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.72rem;
+}
+
+.personal-meaning-fields {
+  display: grid;
+  gap: 15px;
 }
 
 .scope-note {
@@ -1198,7 +1702,7 @@ h1 {
   }
 
   .card-option {
-    min-height: 184px;
+    min-height: 218px;
     padding: 11px 6px 9px;
   }
 
@@ -1224,6 +1728,9 @@ h1 {
 
   .spread-position {
     width: 31%;
+  }
+
+  .spread-position__select {
     padding: 8px 3px;
   }
 
@@ -1234,6 +1741,62 @@ h1 {
 
   .spread-position__label span {
     font-size: 0.52rem;
+  }
+
+  .spread-position__meaning {
+    padding-inline: 5px;
+    font-size: 0.46rem;
+  }
+
+  .local-library-summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .local-library-summary p {
+    text-align: left;
+  }
+
+  .case-form-section {
+    padding: 20px 16px;
+    border-radius: 18px;
+  }
+
+  .case-auto-info {
+    grid-template-columns: 1fr;
+  }
+
+  .optional-case-fields summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .optional-case-fields summary small {
+    text-align: left;
+  }
+
+  .optional-case-fields__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .case-form__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .case-form__actions .primary-action {
+    width: 100%;
+  }
+
+  .case-save-success {
+    padding: 22px 18px;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .case-save-success .primary-action {
+    grid-column: 1 / -1;
   }
 
   .scope-note {
@@ -1295,6 +1858,67 @@ h1 {
 
   .picker-modal .category-tab {
     min-height: 42px;
+  }
+
+  .personal-meaning-backdrop {
+    padding: 0;
+    place-items: stretch;
+  }
+
+  .personal-meaning-modal {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .personal-meaning-modal__header {
+    padding: 15px 14px 13px;
+  }
+
+  .personal-meaning-modal__header h2 {
+    font-size: 1.25rem;
+  }
+
+  .personal-meaning-form {
+    padding: 14px;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .personal-meaning-card {
+    position: static;
+    display: grid;
+    padding: 12px;
+    grid-template-columns: 78px minmax(0, 1fr);
+    justify-items: start;
+    column-gap: 13px;
+    text-align: left;
+  }
+
+  .personal-meaning-card .tarot-card-face {
+    width: 72px;
+    grid-row: 1 / 5;
+  }
+
+  .personal-meaning-card strong {
+    margin-top: 7px;
+  }
+
+  .personal-meaning-card > span {
+    margin-top: 3px;
+  }
+
+  .personal-meaning-form__actions {
+    position: sticky;
+    bottom: -14px;
+    padding: 10px 0 0;
+    background: #fffdf9;
+  }
+
+  .personal-meaning-form__actions button {
+    flex: 1 1 0;
   }
 }
 

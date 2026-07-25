@@ -7,7 +7,9 @@ type PickerCategory = "大阿尔卡那" | TarotSuit;
 
 interface TarotCardPickerProps {
   selectedCardId: string | null;
+  personalMeaningCardIds: ReadonlySet<string>;
   onSelect: (cardId: string) => void;
+  onOpenPersonalMeaning: (cardId: string) => void;
 }
 
 const PICKER_CATEGORIES: PickerCategory[] = [
@@ -32,7 +34,9 @@ function belongsToCategory(
 /** 从标准78张牌中点击选择，并只返回现有牌的cardId。 */
 export function TarotCardPicker({
   selectedCardId,
+  personalMeaningCardIds,
   onSelect,
+  onOpenPersonalMeaning,
 }: TarotCardPickerProps) {
   const [activeCategory, setActiveCategory] =
     useState<PickerCategory>("大阿尔卡那");
@@ -77,33 +81,47 @@ export function TarotCardPicker({
       >
         {visibleCards.map((card) => {
           const isSelected = card.cardId === selectedCardId;
+          const hasPersonalMeaning = personalMeaningCardIds.has(card.cardId);
 
           return (
-            <button
+            <div
               className={`card-option${isSelected ? " is-selected" : ""}`}
               key={card.cardId}
-              type="button"
-              aria-label={`${card.nameZh}，${card.nameEn}${isSelected ? "，已选择" : ""}`}
-              aria-pressed={isSelected}
-              onClick={() => onSelect(card.cardId)}
             >
-              <div className="card-option__face" aria-hidden="true">
-                <TarotCardFace
-                  card={card}
-                  orientation={null}
-                  size="compact"
-                  imageLoading="lazy"
-                />
-              </div>
-              <span className="card-option__name-zh">{card.nameZh}</span>
-              <span className="card-option__name-en">{card.nameEn}</span>
-              {isSelected && (
-                <span className="card-option__selected">
-                  <span aria-hidden="true">✓</span>
-                  <span className="sr-only">已选择</span>
-                </span>
-              )}
-            </button>
+              <button
+                className="card-option__select"
+                type="button"
+                aria-label={`${card.nameZh}，${card.nameEn}${isSelected ? "，已选择" : ""}`}
+                aria-pressed={isSelected}
+                onClick={() => onSelect(card.cardId)}
+              >
+                <div className="card-option__face" aria-hidden="true">
+                  <TarotCardFace
+                    card={card}
+                    orientation={null}
+                    size="compact"
+                    imageLoading="lazy"
+                  />
+                </div>
+                <span className="card-option__name-zh">{card.nameZh}</span>
+                <span className="card-option__name-en">{card.nameEn}</span>
+                {isSelected && (
+                  <span className="card-option__selected">
+                    <span aria-hidden="true">✓</span>
+                    <span className="sr-only">已选择</span>
+                  </span>
+                )}
+              </button>
+
+              <button
+                className="card-option__meaning"
+                type="button"
+                aria-label={`编辑${card.nameZh}的个人牌意`}
+                onClick={() => onOpenPersonalMeaning(card.cardId)}
+              >
+                {hasPersonalMeaning ? "个人牌意 · 已有笔记" : "个人牌意"}
+              </button>
+            </div>
           );
         })}
       </div>
