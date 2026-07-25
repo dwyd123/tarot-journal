@@ -87,13 +87,13 @@ function App() {
     setIsPickerOpen(false);
   }
 
-  function handlePositionComplete(
-    completedSelection: DemoPositionSelection,
+  function handlePositionConfirm(
+    confirmedSelection: DemoPositionSelection,
   ): void {
     const completedPosition = activePosition;
     const nextSelections = {
       ...selections,
-      [completedPosition.positionId]: completedSelection,
+      [completedPosition.positionId]: confirmedSelection,
     };
     const positionsByOrder = [...activeTemplate.positions].sort(
       (first, second) => first.order - second.order,
@@ -212,7 +212,7 @@ function App() {
             initialSelection={activeSelection}
             position={activePosition}
             onClose={handlePickerClose}
-            onComplete={handlePositionComplete}
+            onConfirm={handlePositionConfirm}
           />
         )}
 

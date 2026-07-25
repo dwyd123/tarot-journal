@@ -4,6 +4,12 @@ import type {
   TarotSuit,
 } from "../types/tarot";
 
+const RIDER_WAITE_IMAGE_DIRECTORY = "/tarot/rider-waite";
+
+function getRiderWaiteImagePath(cardId: string): string {
+  return `${RIDER_WAITE_IMAGE_DIRECTORY}/${cardId}.jpg`;
+}
+
 export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
   {
     cardId: "major-fool",
@@ -13,7 +19,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 0,
     displayNumber: "0",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-fool"),
   },
   {
     cardId: "major-magician",
@@ -23,7 +29,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 1,
     displayNumber: "I",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-magician"),
   },
   {
     cardId: "major-high-priestess",
@@ -33,7 +39,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 2,
     displayNumber: "II",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-high-priestess"),
   },
   {
     cardId: "major-empress",
@@ -43,7 +49,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 3,
     displayNumber: "III",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-empress"),
   },
   {
     cardId: "major-emperor",
@@ -53,7 +59,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 4,
     displayNumber: "IV",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-emperor"),
   },
   {
     cardId: "major-hierophant",
@@ -63,7 +69,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 5,
     displayNumber: "V",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-hierophant"),
   },
   {
     cardId: "major-lovers",
@@ -73,7 +79,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 6,
     displayNumber: "VI",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-lovers"),
   },
   {
     cardId: "major-chariot",
@@ -83,7 +89,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 7,
     displayNumber: "VII",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-chariot"),
   },
   {
     cardId: "major-strength",
@@ -93,7 +99,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 8,
     displayNumber: "VIII",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-strength"),
   },
   {
     cardId: "major-hermit",
@@ -103,7 +109,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 9,
     displayNumber: "IX",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-hermit"),
   },
   {
     cardId: "major-wheel-of-fortune",
@@ -113,7 +119,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 10,
     displayNumber: "X",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-wheel-of-fortune"),
   },
   {
     cardId: "major-justice",
@@ -123,7 +129,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 11,
     displayNumber: "XI",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-justice"),
   },
   {
     cardId: "major-hanged-man",
@@ -133,7 +139,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 12,
     displayNumber: "XII",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-hanged-man"),
   },
   {
     cardId: "major-death",
@@ -143,7 +149,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 13,
     displayNumber: "XIII",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-death"),
   },
   {
     cardId: "major-temperance",
@@ -153,7 +159,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 14,
     displayNumber: "XIV",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-temperance"),
   },
   {
     cardId: "major-devil",
@@ -163,7 +169,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 15,
     displayNumber: "XV",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-devil"),
   },
   {
     cardId: "major-tower",
@@ -173,7 +179,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 16,
     displayNumber: "XVI",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-tower"),
   },
   {
     cardId: "major-star",
@@ -183,7 +189,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 17,
     displayNumber: "XVII",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-star"),
   },
   {
     cardId: "major-moon",
@@ -193,7 +199,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 18,
     displayNumber: "XVIII",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-moon"),
   },
   {
     cardId: "major-sun",
@@ -203,7 +209,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 19,
     displayNumber: "XIX",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-sun"),
   },
   {
     cardId: "major-judgement",
@@ -213,7 +219,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 20,
     displayNumber: "XX",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-judgement"),
   },
   {
     cardId: "major-world",
@@ -223,7 +229,7 @@ export const MAJOR_ARCANA_CARDS: TarotCardDefinition[] = [
     suit: null,
     rank: 21,
     displayNumber: "XXI",
-    imagePath: null,
+    imagePath: getRiderWaiteImagePath("major-world"),
   },
 ];
 
@@ -281,16 +287,20 @@ function createSuitCards(
   suitZh: TarotSuit,
   suitEn: string,
 ): TarotCardDefinition[] {
-  return MINOR_RANKS.map((rank) => ({
-    cardId: `${suitId}-${rank.idPart}`,
-    nameZh: `${suitZh}${rank.nameZh}`,
-    nameEn: `${rank.nameEn} of ${suitEn}`,
-    arcana: "小阿尔卡那",
-    suit: suitZh,
-    rank: rank.rank,
-    displayNumber: rank.displayNumber,
-    imagePath: null,
-  }));
+  return MINOR_RANKS.map((rank) => {
+    const cardId = `${suitId}-${rank.idPart}`;
+
+    return {
+      cardId,
+      nameZh: `${suitZh}${rank.nameZh}`,
+      nameEn: `${rank.nameEn} of ${suitEn}`,
+      arcana: "小阿尔卡那",
+      suit: suitZh,
+      rank: rank.rank,
+      displayNumber: rank.displayNumber,
+      imagePath: getRiderWaiteImagePath(cardId),
+    };
+  });
 }
 
 export const WANDS_CARDS = createSuitCards("wands", "权杖", "Wands");

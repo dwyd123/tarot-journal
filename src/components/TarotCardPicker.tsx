@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { TAROT_CARDS } from "../data/tarotCards";
 import type { TarotCardDefinition, TarotSuit } from "../types/tarot";
+import { TarotCardFace } from "./TarotCardFace";
 
 type PickerCategory = "大阿尔卡那" | TarotSuit;
 
@@ -86,12 +87,16 @@ export function TarotCardPicker({
               aria-pressed={isSelected}
               onClick={() => onSelect(card.cardId)}
             >
-              <span className="card-option__number">{card.displayNumber}</span>
+              <div className="card-option__face" aria-hidden="true">
+                <TarotCardFace
+                  card={card}
+                  orientation={null}
+                  size="compact"
+                  imageLoading="lazy"
+                />
+              </div>
               <span className="card-option__name-zh">{card.nameZh}</span>
               <span className="card-option__name-en">{card.nameEn}</span>
-              <span className="card-option__group">
-                {card.suit ?? "大阿尔卡那"}
-              </span>
               {isSelected && (
                 <span className="card-option__selected">
                   <span aria-hidden="true">✓</span>

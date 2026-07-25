@@ -4,6 +4,7 @@ import { TAROT_CARDS } from "./tarotCards";
 
 export interface DataIntegritySummary {
   cardCount: number;
+  imagePathCount: number;
   majorArcanaCount: number;
   suitCounts: Record<TarotSuit, number>;
   templateCount: number;
@@ -40,14 +41,37 @@ export function validateDataIntegrity(): DataIntegritySummary {
     throw new Error("存在基础字段不完整的塔罗牌资料。");
   }
 
-  if (TAROT_CARDS.some((card) => card.imagePath !== null)) {
-    throw new Error("第一版所有塔罗牌的imagePath都应为null。");
+  const cardsWithoutImages = TAROT_CARDS.filter((card) => !card.imagePath);
+
+  if (cardsWithoutImages.length > 0) {
+    throw new Error(
+      `存在未设置imagePath的塔罗牌：${cardsWithoutImages
+        .map((card) => card.cardId)
+        .join("、")}`,
+    );
   }
 
   assertNoDuplicates(
     TAROT_CARDS.map((card) => card.cardId),
     "cardId",
   );
+
+  const imagePaths = TAROT_CARDS.map((card) => card.imagePath as string);
+
+  assertNoDuplicates(imagePaths, "imagePath");
+
+  const cardsWithUnexpectedImagePaths = TAROT_CARDS.filter(
+    (card) =>
+      card.imagePath !== `/tarot/rider-waite/${card.cardId}.jpg`,
+  );
+
+  if (cardsWithUnexpectedImagePaths.length > 0) {
+    throw new Error(
+      `牌面路径与cardId不一致：${cardsWithUnexpectedImagePaths
+        .map((card) => card.cardId)
+        .join("、")}`,
+    );
+  }
 
   const majorArcanaCount = TAROT_CARDS.filter(
     (card) => card.arcana === "大阿尔卡那",
@@ -105,6 +129,7 @@ export function validateDataIntegrity(): DataIntegritySummary {
 
   return {
     cardCount: TAROT_CARDS.length,
+    imagePathCount: imagePaths.length,
     majorArcanaCount,
     suitCounts,
     templateCount: SPREAD_TEMPLATES.length,
