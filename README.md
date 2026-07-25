@@ -27,11 +27,17 @@ This project uses React, TypeScript, and Vite.
 
 ## Current Development Scope
 
-The second development stage provides the core TypeScript types, the complete
-78-card Rider-Waite tarot data set, three built-in spread templates, and a
-lightweight data integrity check.
+The third development stage provides three reusable visual components:
+
+- `TarotCardPicker`: category-based click selection from the existing 78 cards,
+  returning the selected `cardId` to the active spread position;
+- `TarotCardFace`: a text placeholder card with upright and reversed display;
+- `SpreadPreview`: clickable fixed positions with independent temporary card
+  and orientation selections.
 
 Run `npm run check:data` to verify the card and spread data.
 
-Card selection, card components, case forms, images, and local storage will be
-added in later stages.
+The picker returns an existing `cardId` and does not accept free-text card
+names. Each position requires an explicit card selection before its upright or
+reversed direction can be chosen. Case forms, persistence, real images, search,
+and spread editing remain out of scope.
