@@ -3,15 +3,13 @@ import type { DemoSelections } from "../types/demo";
 import type {
   CaseCategory,
   CasePosition,
-  SpreadTemplate,
   TarotCase,
   TemplateSpreadSnapshot,
 } from "../types/tarot";
 import { calculateCaseStatus } from "./calculateCaseStatus";
+import { generateTarotCaseTitle } from "./createTarotCase";
 
-export const TAROT_CASE_DATA_VERSION = 1;
-
-export interface CreateTarotCaseInput {
+export interface UpdateTarotCaseInput {
   readingDate: string;
   question: string;
   overallInterpretation: string;
@@ -20,31 +18,19 @@ export interface CreateTarotCaseInput {
   advice?: string;
   followUp?: string;
   reviewNotes?: string;
-  template: SpreadTemplate;
   selections: DemoSelections;
 }
 
-export function generateTarotCaseTitle(
-  question: string,
-  readingDate: string,
-  templateName: string,
-): string {
-  const normalizedQuestion = question.trim();
-
-  if (!normalizedQuestion) {
-    return `${readingDate} ${templateName}`;
-  }
-
-  return normalizedQuestion.length > 30
-    ? `${normalizedQuestion.slice(0, 30)}…`
-    : normalizedQuestion;
+function optionalText(value: string | undefined): string | undefined {
+  const normalizedValue = value?.trim();
+  return normalizedValue || undefined;
 }
 
-export function createTemplateSpreadSnapshot(
-  template: SpreadTemplate,
+function updateSpreadSnapshot(
+  snapshot: TemplateSpreadSnapshot,
   selections: DemoSelections,
 ): TemplateSpreadSnapshot {
-  const positions: CasePosition[] = template.positions.map((position) => {
+  const positions: CasePosition[] = snapshot.positions.map((position) => {
     const selection = selections[position.positionId];
 
     if (!selection?.cardId || !selection.orientation) {
@@ -68,24 +54,27 @@ export function createTemplateSpreadSnapshot(
   });
 
   return {
-    templateId: template.templateId,
-    templateVersion: template.templateVersion,
-    templateName: template.templateName,
-    templateDescription: template.templateDescription,
+    ...snapshot,
     positions,
   };
 }
 
-function optionalText(value: string | undefined): string | undefined {
-  const normalizedValue = value?.trim();
-  return normalizedValue || undefined;
-}
+/** 在保留案例身份与创建时间的前提下生成更新后的案例。 */
+export function createUpdatedTarotCase(
+  originalCase: TarotCase,
+  input: UpdateTarotCaseInput,
+): TarotCase {
+  if (originalCase.spreadMode !== "template") {
+    throw new Error("当前版本暂不支持编辑无固定牌阵案例。");
+  }
 
-/** 根据页面中的牌阵结果和表单内容建立可长期保存的正式案例。 */
-export function createTarotCase(input: CreateTarotCaseInput): TarotCase {
+  const readingDate = input.readingDate.trim();
   const question = input.question.trim();
   const overallInterpretation = input.overallInterpretation.trim();
-  const readingDate = input.readingDate.trim();
+
+  if (!readingDate) {
+    throw new Error("请选择占卜日期。");
+  }
 
   if (!question) {
     throw new Error("请填写问题。");
@@ -95,25 +84,15 @@ export function createTarotCase(input: CreateTarotCaseInput): TarotCase {
     throw new Error("请填写综合解读。");
   }
 
-  if (!readingDate) {
-    throw new Error("请选择占卜日期。");
-  }
-
-  const timestamp = new Date().toISOString();
   const followUp = optionalText(input.followUp);
   const reviewNotes = optionalText(input.reviewNotes);
-  const spreadSnapshot = createTemplateSpreadSnapshot(
-    input.template,
-    input.selections,
-  );
 
   return {
-    id: crypto.randomUUID(),
-    dataVersion: TAROT_CASE_DATA_VERSION,
+    ...originalCase,
     title: generateTarotCaseTitle(
       question,
       readingDate,
-      input.template.templateName,
+      originalCase.spreadSnapshot.templateName,
     ),
     readingDate,
     querentCode: optionalText(input.querentCode),
@@ -123,12 +102,11 @@ export function createTarotCase(input: CreateTarotCaseInput): TarotCase {
     advice: optionalText(input.advice),
     followUp,
     reviewNotes,
-    tags: [],
-    isFavorite: false,
     status: calculateCaseStatus(followUp, reviewNotes),
-    createdAt: timestamp,
-    updatedAt: timestamp,
-    spreadMode: "template",
-    spreadSnapshot,
+    updatedAt: new Date().toISOString(),
+    spreadSnapshot: updateSpreadSnapshot(
+      originalCase.spreadSnapshot,
+      input.selections,
+    ),
   };
 }

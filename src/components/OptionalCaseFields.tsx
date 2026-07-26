@@ -20,12 +20,14 @@ export interface OptionalCaseValues {
 
 interface OptionalCaseFieldsProps {
   values: OptionalCaseValues;
+  defaultOpen?: boolean;
   onChange: (values: OptionalCaseValues) => void;
 }
 
 /** 不影响保存的补充信息，收纳在折叠区域中。 */
 export function OptionalCaseFields({
   values,
+  defaultOpen = false,
   onChange,
 }: OptionalCaseFieldsProps) {
   function updateField<Key extends keyof OptionalCaseValues>(
@@ -36,7 +38,7 @@ export function OptionalCaseFields({
   }
 
   return (
-    <details className="optional-case-fields">
+    <details className="optional-case-fields" open={defaultOpen || undefined}>
       <summary>
         <span>补充信息</span>
         <small>咨询者、分类、建议、反馈与复盘均可稍后再写</small>

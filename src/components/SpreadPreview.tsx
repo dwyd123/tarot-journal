@@ -1,26 +1,31 @@
 import { TAROT_CARDS } from "../data/tarotCards";
 import type { DemoSelections } from "../types/demo";
-import type { SpreadTemplate } from "../types/tarot";
+import type {
+  SpreadTemplate,
+  TemplateSpreadSnapshot,
+} from "../types/tarot";
 import { TarotCardFace } from "./TarotCardFace";
 
 interface SpreadPreviewProps {
-  template: SpreadTemplate;
-  activePositionId: string;
+  template: SpreadTemplate | TemplateSpreadSnapshot;
+  activePositionId?: string | null;
   selections: DemoSelections;
-  personalMeaningCardIds: ReadonlySet<string>;
+  personalMeaningCardIds?: ReadonlySet<string>;
   readOnly?: boolean;
-  onPositionSelect: (positionId: string) => void;
+  onPositionSelect?: (positionId: string) => void;
   onOpenPersonalMeaning: (cardId: string) => void;
 }
+
+const EMPTY_PERSONAL_MEANING_CARD_IDS = new Set<string>();
 
 /** 按模板中的相对坐标展示固定牌位，牌位文字不会随牌面旋转。 */
 export function SpreadPreview({
   template,
   activePositionId,
   selections,
-  personalMeaningCardIds,
+  personalMeaningCardIds = EMPTY_PERSONAL_MEANING_CARD_IDS,
   readOnly = false,
-  onPositionSelect,
+  onPositionSelect = () => undefined,
   onOpenPersonalMeaning,
 }: SpreadPreviewProps) {
   return (
@@ -72,62 +77,115 @@ export function SpreadPreview({
                 top: `${position.y}%`,
               }}
             >
-              <button
-                className="spread-position__select"
-                type="button"
-                aria-label={`为${position.positionName}选择牌`}
-                aria-pressed={isActive}
-                disabled={readOnly}
-                onClick={() => onPositionSelect(position.positionId)}
-              >
-                <div
-                  className="spread-position__card"
-                  style={{ transform: `rotate(${displayRotation}deg)` }}
-                >
+              {readOnly ? (
+                <div className="spread-position__read-only">
                   {card ? (
-                    <TarotCardFace
-                      card={card}
-                      orientation={orientation}
-                      size="compact"
-                    />
+                    <button
+                      className="spread-position__card-action"
+                      type="button"
+                      aria-label={`查看${card.nameZh}的个人牌意`}
+                      onClick={() => onOpenPersonalMeaning(card.cardId)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          onOpenPersonalMeaning(card.cardId);
+                        }
+                      }}
+                    >
+                      <div
+                        className="spread-position__card"
+                        style={{ transform: `rotate(${displayRotation}deg)` }}
+                      >
+                        <TarotCardFace
+                          card={card}
+                          orientation={orientation}
+                          size="compact"
+                        />
+                      </div>
+                    </button>
                   ) : (
                     <div
-                      className="empty-card-slot"
-                      aria-label="尚未选择塔罗牌"
+                      className="spread-position__card"
+                      style={{ transform: `rotate(${displayRotation}deg)` }}
                     >
-                      <span aria-hidden="true">✦</span>
-                      <small>点击选择这张牌</small>
+                      <div
+                        className="empty-card-slot"
+                        aria-label="牌面资料不可用"
+                      >
+                        <span aria-hidden="true">✦</span>
+                        <small>牌面资料不可用</small>
+                      </div>
                     </div>
                   )}
+
+                  <span className="spread-position__label">
+                    <strong>{position.positionName}</strong>
+                    <span>{position.positionMeaning}</span>
+                  </span>
                 </div>
+              ) : (
+                <>
+                  <button
+                    className="spread-position__select"
+                    type="button"
+                    aria-label={`为${position.positionName}选择牌`}
+                    aria-pressed={isActive}
+                    onClick={() => onPositionSelect(position.positionId)}
+                  >
+                    <div
+                      className="spread-position__card"
+                      style={{ transform: `rotate(${displayRotation}deg)` }}
+                    >
+                      {card ? (
+                        <TarotCardFace
+                          card={card}
+                          orientation={orientation}
+                          size="compact"
+                        />
+                      ) : (
+                        <div
+                          className="empty-card-slot"
+                          aria-label="尚未选择塔罗牌"
+                        >
+                          <span aria-hidden="true">✦</span>
+                          <small>点击选择这张牌</small>
+                        </div>
+                      )}
+                    </div>
 
-                {isActive && !readOnly && (
-                  <span className="spread-position__active-mark">正在选择</span>
-                )}
+                    {isActive && (
+                      <span className="spread-position__active-mark">
+                        正在选择
+                      </span>
+                    )}
 
-                <span
-                  className={`spread-position__state${
-                    card && orientation ? " is-complete" : ""
-                  }`}
-                >
-                  {completionLabel}
-                </span>
+                    <span
+                      className={`spread-position__state${
+                        card && orientation ? " is-complete" : ""
+                      }`}
+                    >
+                      {completionLabel}
+                    </span>
 
-                <span className="spread-position__label">
-                  <strong>{position.positionName}</strong>
-                  <span>{position.positionMeaning}</span>
-                </span>
-              </button>
+                    <span className="spread-position__label">
+                      <strong>{position.positionName}</strong>
+                      <span>{position.positionMeaning}</span>
+                    </span>
+                  </button>
 
-              {card && (
-                <button
-                  className="spread-position__meaning"
-                  type="button"
-                  aria-label={`编辑${card.nameZh}的个人牌意`}
-                  onClick={() => onOpenPersonalMeaning(card.cardId)}
-                >
-                  {hasPersonalMeaning ? "个人牌意 · 已有笔记" : "个人牌意"}
-                </button>
+                  {card && (
+                    <button
+                      className="spread-position__meaning"
+                      type="button"
+                      aria-label={`编辑${card.nameZh}的个人牌意`}
+                      onClick={() => onOpenPersonalMeaning(card.cardId)}
+                    >
+                      {hasPersonalMeaning
+                        ? "个人牌意 · 已有笔记"
+                        : "个人牌意"}
+                    </button>
+                  )}
+                </>
               )}
             </div>
           );

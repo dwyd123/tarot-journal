@@ -34,10 +34,12 @@ The current local-first stage supports:
 - the complete 78-card Rider–Waite library with upright and reversed images;
 - formal case entry with an automatically generated title and a full spread
   snapshot;
-- browser-local case storage;
+- browser-local case storage with case lists, details, editing, and deletion;
+- historical spread rendering from each case's saved snapshot;
+- automatic case status updates from follow-up and review notes;
 - a reusable personal card-meaning editor linked by stable `cardId`.
 
 Run `npm run check:data` to verify the card, image, and spread data.
 
-Case lists, cloud sync, login, custom spreads, AI interpretation, and
+Search, filters, cloud sync, login, custom spreads, AI interpretation, and
 multi-deck switching remain out of scope.

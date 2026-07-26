@@ -1,9 +1,45 @@
-import type { PersonalCardMeaning } from "../types/personalCardMeaning";
+import type {
+  PersonalCardMeaning,
+  PersonalMeaningEntry,
+} from "../types/personalCardMeaning";
 
 export const PERSONAL_CARD_MEANING_STORAGE_KEY =
   "tarot-journal:personal-card-meanings:v1";
 
-/** 从新旧版本数据中只取当前仍然使用的三个牌意字段。 */
+function normalizeEntry(value: unknown): PersonalMeaningEntry | undefined {
+  if (typeof value !== "object" || value === null) {
+    return undefined;
+  }
+
+  const entry = value as Record<string, unknown>;
+
+  if (
+    typeof entry.id === "string" &&
+    typeof entry.label === "string" &&
+    typeof entry.content === "string" &&
+    entry.label.trim()
+  ) {
+    return {
+      id: entry.id,
+      label: entry.label.trim(),
+      content: entry.content,
+    };
+  }
+
+  return undefined;
+}
+
+function normalizeEntries(value: unknown): PersonalMeaningEntry[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map(normalizeEntry)
+    .filter((entry): entry is PersonalMeaningEntry => Boolean(entry));
+}
+
+/** 兼容旧版 uprightMeaning / reversedMeaning，并统一为当前结构。 */
 export function normalizeStoredPersonalCardMeaning(
   value: unknown,
 ): PersonalCardMeaning | undefined {
@@ -15,16 +51,35 @@ export function normalizeStoredPersonalCardMeaning(
 
   if (
     typeof meaning.cardId === "string" &&
-    typeof meaning.uprightMeaning === "string" &&
-    typeof meaning.reversedMeaning === "string" &&
     typeof meaning.personalAssociations === "string" &&
     typeof meaning.createdAt === "string" &&
     typeof meaning.updatedAt === "string"
   ) {
+    const hasNewSummaryFields =
+      typeof meaning.uprightSummary === "string" &&
+      typeof meaning.reversedSummary === "string";
+    const hasLegacyMeaningFields =
+      typeof meaning.uprightMeaning === "string" &&
+      typeof meaning.reversedMeaning === "string";
+
+    if (!hasNewSummaryFields && !hasLegacyMeaningFields) {
+      return undefined;
+    }
+
     return {
       cardId: meaning.cardId,
-      uprightMeaning: meaning.uprightMeaning,
-      reversedMeaning: meaning.reversedMeaning,
+      uprightSummary: hasNewSummaryFields
+        ? (meaning.uprightSummary as string)
+        : (meaning.uprightMeaning as string),
+      uprightEntries: hasNewSummaryFields
+        ? normalizeEntries(meaning.uprightEntries)
+        : [],
+      reversedSummary: hasNewSummaryFields
+        ? (meaning.reversedSummary as string)
+        : (meaning.reversedMeaning as string),
+      reversedEntries: hasNewSummaryFields
+        ? normalizeEntries(meaning.reversedEntries)
+        : [],
       personalAssociations: meaning.personalAssociations,
       createdAt: meaning.createdAt,
       updatedAt: meaning.updatedAt,
@@ -32,6 +87,19 @@ export function normalizeStoredPersonalCardMeaning(
   }
 
   return undefined;
+}
+
+/** 牌库中的“已记录”只取真正含有内容的字段。 */
+export function hasPersonalCardMeaningContent(
+  meaning: PersonalCardMeaning,
+): boolean {
+  return Boolean(
+    meaning.uprightSummary.trim() ||
+      meaning.uprightEntries.some((entry) => entry.content.trim()) ||
+      meaning.reversedSummary.trim() ||
+      meaning.reversedEntries.some((entry) => entry.content.trim()) ||
+      meaning.personalAssociations.trim(),
+  );
 }
 
 /** 读取失败或内容损坏时返回空数组。 */

@@ -2,9 +2,19 @@ import { readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { validateDataIntegrity } from "../src/data/dataIntegrity";
 import { TAROT_CARDS } from "../src/data/tarotCards";
-import { normalizeStoredPersonalCardMeaning } from "../src/storage/personalCardMeaningStorage";
-import { normalizeStoredCaseCategory } from "../src/storage/tarotCaseStorage";
+import {
+  hasPersonalCardMeaningContent,
+  normalizeStoredPersonalCardMeaning,
+} from "../src/storage/personalCardMeaningStorage";
+import {
+  normalizeStoredCaseCategory,
+  normalizeStoredTarotCase,
+} from "../src/storage/tarotCaseStorage";
+import type { TarotCase } from "../src/types/tarot";
+import { calculateCaseStatus } from "../src/utils/calculateCaseStatus";
 import { generateTarotCaseTitle } from "../src/utils/createTarotCase";
+import { sortTarotCases } from "../src/utils/sortTarotCases";
+import { createUpdatedTarotCase } from "../src/utils/updateTarotCase";
 
 const summary = validateDataIntegrity();
 const imageDirectory = resolve("public/tarot/rider-waite");
@@ -85,9 +95,147 @@ const legacyPersonalMeaning = normalizeStoredPersonalCardMeaning({
 if (
   !legacyPersonalMeaning ||
   "visualNotes" in legacyPersonalMeaning ||
+  legacyPersonalMeaning.uprightSummary !== "直觉" ||
+  legacyPersonalMeaning.reversedSummary !== "忽略内心" ||
+  legacyPersonalMeaning.uprightEntries.length !== 0 ||
+  legacyPersonalMeaning.reversedEntries.length !== 0 ||
   legacyPersonalMeaning.personalAssociations !== "个人经验"
 ) {
   throw new Error("旧个人牌意数据的兼容规则不正确。");
+}
+
+const structuredPersonalMeaning = normalizeStoredPersonalCardMeaning({
+  cardId: "major-high-priestess",
+  uprightSummary: "",
+  uprightEntries: [
+    { id: "entry-1", label: "感情", content: "存在未表达的感受。" },
+  ],
+  reversedSummary: "",
+  reversedEntries: [],
+  personalAssociations: "",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+});
+
+if (
+  !structuredPersonalMeaning ||
+  !hasPersonalCardMeaningContent(structuredPersonalMeaning)
+) {
+  throw new Error("新版个人牌意主题条目或“已记录”判断不正确。");
+}
+
+if (
+  calculateCaseStatus() !== "待反馈" ||
+  calculateCaseStatus("已有反馈") !== "已反馈" ||
+  calculateCaseStatus("已有反馈", "已有复盘") !== "已复盘"
+) {
+  throw new Error("案例状态自动计算规则不正确。");
+}
+
+const originalCase: TarotCase = {
+  id: "case-for-update-check",
+  dataVersion: 1,
+  title: "旧问题",
+  readingDate: "2026-01-01",
+  question: "旧问题",
+  overallInterpretation: "旧解读",
+  tags: [],
+  isFavorite: false,
+  status: "待反馈",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  updatedAt: "2026-01-01T00:00:00.000Z",
+  spreadMode: "template",
+  spreadSnapshot: {
+    templateId: "single-card",
+    templateVersion: 1,
+    templateName: "单张牌",
+    templateDescription: "测试牌阵",
+    positions: [
+      {
+        positionId: "core",
+        order: 1,
+        positionName: "核心牌",
+        positionMeaning: "核心信息",
+        x: 50,
+        y: 50,
+        displayOrientation: "portrait",
+        rotation: 0,
+        cardId: "major-fool",
+        cardNameSnapshot: "愚人",
+        orientation: "正位",
+      },
+    ],
+  },
+};
+const updatedCase = createUpdatedTarotCase(originalCase, {
+  readingDate: "2026-01-02",
+  question: "更新后的问题",
+  overallInterpretation: "更新后的解读",
+  followUp: "已有反馈",
+  reviewNotes: "已有复盘",
+  selections: {
+    core: {
+      cardId: "major-magician",
+      orientation: "逆位",
+    },
+  },
+});
+
+if (
+  updatedCase.id !== originalCase.id ||
+  updatedCase.createdAt !== originalCase.createdAt ||
+  updatedCase.updatedAt === originalCase.updatedAt ||
+  updatedCase.title !== "更新后的问题" ||
+  updatedCase.status !== "已复盘" ||
+  updatedCase.spreadSnapshot.positions[0]?.cardId !== "major-magician" ||
+  updatedCase.spreadSnapshot.positions[0]?.orientation !== "逆位"
+) {
+  throw new Error("案例更新时的身份、时间、标题、状态或牌位规则不正确。");
+}
+
+const normalizedLegacyCase = normalizeStoredTarotCase({
+  ...originalCase,
+  category: "工作",
+  tags: undefined,
+  isFavorite: undefined,
+  status: undefined,
+});
+
+if (
+  !normalizedLegacyCase ||
+  normalizedLegacyCase.category !== "事业" ||
+  normalizedLegacyCase.tags.length !== 0 ||
+  normalizedLegacyCase.isFavorite !== false
+) {
+  throw new Error("旧案例缺少可选字段时的兼容规则不正确。");
+}
+
+const sortedCaseIds = sortTarotCases([
+  {
+    ...originalCase,
+    id: "older-reading-date",
+    readingDate: "2026-01-01",
+    createdAt: "2026-01-03T00:00:00.000Z",
+  },
+  {
+    ...originalCase,
+    id: "same-date-earlier-created",
+    readingDate: "2026-01-02",
+    createdAt: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    ...originalCase,
+    id: "same-date-later-created",
+    readingDate: "2026-01-02",
+    createdAt: "2026-01-02T00:00:00.000Z",
+  },
+]).map((tarotCase) => tarotCase.id);
+
+if (
+  sortedCaseIds.join(",") !==
+  "same-date-later-created,same-date-earlier-created,older-reading-date"
+) {
+  throw new Error("案例列表的日期与创建时间排序规则不正确。");
 }
 
 console.log("数据完整性检查通过");
@@ -105,3 +253,8 @@ console.log(`- 力量cardId：${summary.strengthCardId}`);
 console.log("- 案例自动标题规则：通过");
 console.log("- 旧问题分类兼容规则：通过");
 console.log("- 旧个人牌意兼容规则：通过");
+console.log("- 新版个人牌意主题结构：通过");
+console.log("- 案例状态自动计算规则：通过");
+console.log("- 案例编辑保留与更新规则：通过");
+console.log("- 旧案例可选字段兼容规则：通过");
+console.log("- 案例列表排序规则：通过");
