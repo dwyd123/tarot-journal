@@ -15,6 +15,7 @@ export interface UpdateTarotCaseInput {
   overallInterpretation: string;
   querentCode?: string;
   category?: CaseCategory;
+  background?: string;
   advice?: string;
   followUp?: string;
   reviewNotes?: string;
@@ -99,6 +100,7 @@ export function createUpdatedTarotCase(
     category: input.category,
     question,
     overallInterpretation,
+    background: optionalText(input.background),
     advice: optionalText(input.advice),
     followUp,
     reviewNotes,

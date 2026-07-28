@@ -9,20 +9,22 @@ interface TarotCaseDetailProps {
   onDelete: (caseId: string) => void;
   onEdit: (caseId: string) => void;
   onOpenPersonalMeaning: (cardId: string) => void;
+  onToggleFavorite: (caseId: string) => void;
 }
 
 interface OptionalDetailProps {
   label: string;
   value?: string;
+  className?: string;
 }
 
-function OptionalDetail({ label, value }: OptionalDetailProps) {
+function OptionalDetail({ label, value, className = "" }: OptionalDetailProps) {
   if (!value) {
     return null;
   }
 
   return (
-    <section className="case-detail__text-block">
+    <section className={`case-detail__text-block${className ? ` ${className}` : ""}`}>
       <h3>{label}</h3>
       <p>{value}</p>
     </section>
@@ -36,6 +38,7 @@ export function TarotCaseDetail({
   onDelete,
   onEdit,
   onOpenPersonalMeaning,
+  onToggleFavorite,
 }: TarotCaseDetailProps) {
   if (tarotCase.spreadMode !== "template") {
     return (
@@ -62,10 +65,29 @@ export function TarotCaseDetail({
 
       <header className="case-detail__header">
         <div>
-          <p className="section-kicker">案例详情</p>
-          <h2 id="case-detail-title">{tarotCase.title}</h2>
+          <p className="section-kicker">问题</p>
+          <h2 id="case-detail-title">{tarotCase.question}</h2>
         </div>
-        <span className="case-status-badge">{tarotCase.status}</span>
+        <div className="case-detail__header-actions">
+          <span className="case-status-badge">{tarotCase.status}</span>
+          <button
+            className={`case-detail__favorite${
+              tarotCase.isFavorite ? " is-favorite" : ""
+            }`}
+            type="button"
+            aria-label={
+              tarotCase.isFavorite ? "取消收藏案例" : "收藏案例"
+            }
+            aria-pressed={tarotCase.isFavorite}
+            title={tarotCase.isFavorite ? "取消收藏案例" : "收藏案例"}
+            onClick={() => onToggleFavorite(tarotCase.id)}
+          >
+            <span aria-hidden="true">
+              {tarotCase.isFavorite ? "★" : "☆"}
+            </span>
+            {tarotCase.isFavorite ? "已收藏" : "收藏案例"}
+          </button>
+        </div>
       </header>
 
       <dl className="case-detail__meta">
@@ -96,10 +118,11 @@ export function TarotCaseDetail({
         </div>
       )}
 
-      <section className="case-detail__question">
-        <p className="section-kicker">问题</p>
-        <h3>{tarotCase.question}</h3>
-      </section>
+      <OptionalDetail
+        className="case-detail__background"
+        label="背景"
+        value={tarotCase.background}
+      />
 
       <CaseSpreadView
         snapshot={tarotCase.spreadSnapshot}

@@ -34,12 +34,14 @@ function createEmptySelections(templateId: string): DemoSelections {
 
 interface TarotCaseCreateViewProps {
   personalMeaningCardIds: ReadonlySet<string>;
+  onDirtyChange: (isDirty: boolean) => void;
   onCreate: (tarotCase: TarotCase) => TarotCaseFormSubmitResult;
   onOpenPersonalMeaning: (cardId: string) => void;
 }
 
 export function TarotCaseCreateView({
   personalMeaningCardIds,
+  onDirtyChange,
   onCreate,
   onOpenPersonalMeaning,
 }: TarotCaseCreateViewProps) {
@@ -106,6 +108,7 @@ export function TarotCaseCreateView({
     setSelections(createEmptySelections(nextTemplate.templateId));
     setIsPickerOpen(false);
     setCaseDraftVersion((version) => version + 1);
+    onDirtyChange(true);
     setWorkflowMessage(
       `已切换到「${nextTemplate.templateName}」，点击牌位开始选牌。`,
     );
@@ -137,6 +140,7 @@ export function TarotCaseCreateView({
 
     setSelections(nextSelections);
     setIsPickerOpen(false);
+    onDirtyChange(true);
 
     if (nextIncompletePosition) {
       setActivePositionId(nextIncompletePosition.positionId);
@@ -191,7 +195,7 @@ export function TarotCaseCreateView({
             <p className="section-kicker">步骤 1</p>
             <h2 id="spread-title">选择牌阵并完成选牌</h2>
           </div>
-          <p>点击牌位选择牌，点击“个人牌意”记录长期笔记。</p>
+          <p>点击牌位选择牌，点击“我的牌意”记录长期笔记。</p>
         </div>
 
         <div className="spread-template-switcher" aria-label="选择内置牌阵">
@@ -240,6 +244,7 @@ export function TarotCaseCreateView({
           completedPositionCount={completedPositionCount}
           templateName={activeTemplate.templateName}
           totalPositionCount={activeTemplate.positions.length}
+          onDirtyChange={onDirtyChange}
           onSave={handleCaseSave}
         />
       ) : (

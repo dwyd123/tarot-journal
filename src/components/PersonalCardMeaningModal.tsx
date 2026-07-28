@@ -13,6 +13,7 @@ import { TarotCardFace } from "./TarotCardFace";
 interface PersonalCardMeaningModalProps {
   card: TarotCardDefinition;
   onClose: () => void;
+  onDirtyChange?: (isDirty: boolean) => void;
   onSaved: (meaning: PersonalCardMeaning) => void;
 }
 
@@ -283,6 +284,7 @@ function MeaningEntryModal({
 export function PersonalCardMeaningModal({
   card,
   onClose,
+  onDirtyChange,
   onSaved,
 }: PersonalCardMeaningModalProps) {
   const [storedMeaning, setStoredMeaning] = useState(() =>
@@ -305,6 +307,10 @@ export function PersonalCardMeaningModal({
   const hasUnsavedChanges =
     mode === "edit" &&
     JSON.stringify(draft) !== JSON.stringify(storedDraft);
+
+  useEffect(() => {
+    onDirtyChange?.(hasUnsavedChanges);
+  }, [hasUnsavedChanges, onDirtyChange]);
 
   const requestClose = useCallback(() => {
     if (composer) {

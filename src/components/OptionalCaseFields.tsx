@@ -13,6 +13,7 @@ const CASE_CATEGORIES: CaseCategory[] = [
 export interface OptionalCaseValues {
   querentCode: string;
   category: CaseCategory | "";
+  background: string;
   advice: string;
   followUp: string;
   reviewNotes: string;
@@ -41,7 +42,7 @@ export function OptionalCaseFields({
     <details className="optional-case-fields" open={defaultOpen || undefined}>
       <summary>
         <span>补充信息</span>
-        <small>咨询者、分类、建议、反馈与复盘均可稍后再写</small>
+        <small>咨询者、分类、背景、建议、反馈与复盘均可稍后再写</small>
       </summary>
 
       <div className="optional-case-fields__grid">
@@ -75,6 +76,18 @@ export function OptionalCaseFields({
               </option>
             ))}
           </select>
+        </label>
+
+        <label className="form-field form-field--wide">
+          <span>背景</span>
+          <textarea
+            rows={4}
+            value={values.background}
+            onChange={(event) =>
+              updateField("background", event.currentTarget.value)
+            }
+            placeholder="记录咨询者背景、事件上下文或问题发生前的情况"
+          />
         </label>
 
         <label className="form-field form-field--wide">

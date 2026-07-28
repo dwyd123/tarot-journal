@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { AppShell } from "./components/AppShell";
 import { MyTarotDeck } from "./components/MyTarotDeck";
 import { PersonalCardMeaningModal } from "./components/PersonalCardMeaningModal";
+import { PlaceholderPage } from "./components/PlaceholderPage";
 import { TarotCaseCreateView } from "./components/TarotCaseCreateView";
 import { TarotCaseDetail } from "./components/TarotCaseDetail";
 import { TarotCaseEditor } from "./components/TarotCaseEditor";
@@ -17,15 +19,9 @@ import {
   updateTarotCase,
 } from "./storage/tarotCaseStorage";
 import type { PersonalCardMeaning } from "./types/personalCardMeaning";
+import type { AppView } from "./types/navigation";
 import type { TarotCase } from "./types/tarot";
 import type { TarotCaseFormSubmitResult } from "./components/TarotCaseForm";
-
-type AppView =
-  | { name: "list" }
-  | { name: "create" }
-  | { name: "detail"; caseId: string }
-  | { name: "edit"; caseId: string }
-  | { name: "deck" };
 
 function App() {
   const [view, setView] = useState<AppView>({ name: "list" });
@@ -44,7 +40,13 @@ function App() {
       ),
   );
   const [viewMessage, setViewMessage] = useState("");
+  const [hasUnsavedCreateChanges, setHasUnsavedCreateChanges] =
+    useState(false);
   const [hasUnsavedEditChanges, setHasUnsavedEditChanges] = useState(false);
+  const [
+    hasUnsavedPersonalMeaningChanges,
+    setHasUnsavedPersonalMeaningChanges,
+  ] = useState(false);
   const editorTopRef = useRef<HTMLDivElement>(null);
 
   const selectedCase =
@@ -54,9 +56,6 @@ function App() {
   const personalMeaningCard = personalMeaningCardId
     ? TAROT_CARDS.find((card) => card.cardId === personalMeaningCardId)
     : undefined;
-  const isCaseLibraryView =
-    view.name === "list" || view.name === "detail" || view.name === "edit";
-
   useEffect(() => {
     if (view.name === "edit") {
       editorTopRef.current?.scrollIntoView({
@@ -71,15 +70,24 @@ function App() {
   }
 
   function navigate(nextView: AppView): void {
+    const hasUnsavedContent =
+      (view.name === "create" && hasUnsavedCreateChanges) ||
+      (view.name === "edit" && hasUnsavedEditChanges) ||
+      Boolean(
+        personalMeaningCardId && hasUnsavedPersonalMeaningChanges,
+      );
+
     if (
-      view.name === "edit" &&
-      hasUnsavedEditChanges &&
-      !window.confirm("当前修改尚未保存，确定离开吗？")
+      hasUnsavedContent &&
+      !window.confirm("当前内容尚未保存，确定离开吗？")
     ) {
       return;
     }
 
+    setHasUnsavedCreateChanges(false);
     setHasUnsavedEditChanges(false);
+    setHasUnsavedPersonalMeaningChanges(false);
+    setPersonalMeaningCardId(null);
     setViewMessage("");
     setView(nextView);
   }
@@ -90,6 +98,7 @@ function App() {
     try {
       addTarotCase(tarotCase);
       refreshCaseLibrary();
+      setHasUnsavedCreateChanges(false);
       setViewMessage("案例已保存。");
       setView({ name: "detail", caseId: tarotCase.id });
       return { success: true };
@@ -142,6 +151,32 @@ function App() {
     }
   }
 
+  function handleToggleFavorite(caseId: string): void {
+    const tarotCase = caseLibrary.cases.find(
+      (candidate) => candidate.id === caseId,
+    );
+
+    if (!tarotCase) {
+      setViewMessage("没有找到需要收藏的案例。");
+      return;
+    }
+
+    try {
+      updateTarotCase({
+        ...tarotCase,
+        isFavorite: !tarotCase.isFavorite,
+      });
+      refreshCaseLibrary();
+      setViewMessage("");
+    } catch (error) {
+      setViewMessage(
+        error instanceof Error
+          ? error.message
+          : "收藏状态更新失败，请稍后重试。",
+      );
+    }
+  }
+
   function handlePersonalMeaningSaved(
     meaning: PersonalCardMeaning,
   ): void {
@@ -158,76 +193,32 @@ function App() {
   }
 
   return (
-    <main className="app-shell">
-      <header className="intro-card" aria-labelledby="app-title">
-        <div className="intro-card__copy">
-          <div className="brand-mark" aria-hidden="true">
-            ✦
-          </div>
-          <div>
-            <p className="eyebrow">Tarot Journal · Local Edition</p>
-            <h1 id="app-title">塔罗案例手记</h1>
-            <p className="description">
-              记录、查看和复盘保存在当前浏览器中的塔罗案例。
-            </p>
-          </div>
-        </div>
-
-        <div className="intro-card__tools">
-          <div className="data-summary" aria-label="本地数据状态">
-            <p>
-              <strong>{caseLibrary.cases.length}</strong>
-              <span>条本地案例</span>
-            </p>
-            <p>
-              <strong>{personalMeaningCardIds.size}</strong>
-              <span>张个人牌意</span>
-            </p>
-          </div>
-
-          <nav className="app-navigation" aria-label="主要页面">
-            <button
-              className={isCaseLibraryView ? "is-active" : ""}
-              type="button"
-              aria-current={isCaseLibraryView ? "page" : undefined}
-              onClick={() => navigate({ name: "list" })}
-            >
-              我的案例
-            </button>
-            <button
-              className={view.name === "create" ? "is-active" : ""}
-              type="button"
-              aria-current={view.name === "create" ? "page" : undefined}
-              onClick={() => navigate({ name: "create" })}
-            >
-              新建案例
-            </button>
-            <button
-              className={view.name === "deck" ? "is-active" : ""}
-              type="button"
-              aria-current={view.name === "deck" ? "page" : undefined}
-              onClick={() => navigate({ name: "deck" })}
-            >
-              我的牌库
-            </button>
-          </nav>
-        </div>
-      </header>
-
-      <div className="content-shell">
-        {view.name === "list" && (
+    <>
+      <AppShell
+        caseCount={caseLibrary.cases.length}
+        personalMeaningCount={personalMeaningCardIds.size}
+        view={view}
+        onNavigate={navigate}
+      >
+        {(view.name === "list" || view.name === "favorites") && (
           <TarotCaseList
             cases={caseLibrary.cases}
             invalidCount={caseLibrary.invalidCount}
             message={viewMessage}
+            mode={view.name === "favorites" ? "favorites" : "all"}
             onCreate={() => navigate({ name: "create" })}
             onOpen={(caseId) => navigate({ name: "detail", caseId })}
+            onToggleFavorite={handleToggleFavorite}
+            onViewModeChange={(mode) =>
+              navigate({ name: mode === "favorites" ? "favorites" : "list" })
+            }
           />
         )}
 
         {view.name === "create" && (
           <TarotCaseCreateView
             personalMeaningCardIds={personalMeaningCardIds}
+            onDirtyChange={setHasUnsavedCreateChanges}
             onCreate={handleCreateCase}
             onOpenPersonalMeaning={setPersonalMeaningCardId}
           />
@@ -245,6 +236,7 @@ function App() {
               setView({ name: "edit", caseId });
             }}
             onOpenPersonalMeaning={setPersonalMeaningCardId}
+            onToggleFavorite={handleToggleFavorite}
           />
         )}
 
@@ -287,23 +279,23 @@ function App() {
           />
         )}
 
-        <footer className="scope-note">
-          <span aria-hidden="true">✦</span>
-          <p>
-            所有案例和个人牌意仅保存在当前浏览器；暂不包含云端同步和登录。
-          </p>
-        </footer>
-      </div>
+        {view.name === "calendar" && <PlaceholderPage page="calendar" />}
+        {view.name === "settings" && <PlaceholderPage page="settings" />}
+      </AppShell>
 
       {personalMeaningCard && (
         <PersonalCardMeaningModal
           key={personalMeaningCard.cardId}
           card={personalMeaningCard}
-          onClose={() => setPersonalMeaningCardId(null)}
+          onClose={() => {
+            setHasUnsavedPersonalMeaningChanges(false);
+            setPersonalMeaningCardId(null);
+          }}
+          onDirtyChange={setHasUnsavedPersonalMeaningChanges}
           onSaved={handlePersonalMeaningSaved}
         />
       )}
-    </main>
+    </>
   );
 }
 

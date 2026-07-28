@@ -47,6 +47,7 @@ export function TarotCaseEditor({
   const [optionalValues, setOptionalValues] = useState<OptionalCaseValues>({
     querentCode: tarotCase.querentCode ?? "",
     category: tarotCase.category ?? "",
+    background: tarotCase.background ?? "",
     advice: tarotCase.advice ?? "",
     followUp: tarotCase.followUp ?? "",
     reviewNotes: tarotCase.reviewNotes ?? "",
@@ -115,6 +116,7 @@ export function TarotCaseEditor({
           overallInterpretation,
           querentCode: optionalValues.querentCode,
           category: optionalValues.category || undefined,
+          background: optionalValues.background,
           advice: optionalValues.advice,
           followUp: optionalValues.followUp,
           reviewNotes: optionalValues.reviewNotes,

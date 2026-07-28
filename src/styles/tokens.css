@@ -1,0 +1,175 @@
+:root {
+  /* Font family */
+  --font-family-ui:
+    Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Microsoft YaHei", "Noto Sans SC", sans-serif;
+
+  /* Primitive font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Semantic typography */
+  --font-size-display: 30px;
+  --line-height-display: 38px;
+  --font-weight-display: var(--font-weight-bold);
+
+  --font-size-page-title: 28px;
+  --line-height-page-title: 34px;
+  --font-weight-page-title: var(--font-weight-semibold);
+
+  --font-size-section-title: 18px;
+  --line-height-section-title: 26px;
+  --font-weight-section-title: var(--font-weight-semibold);
+
+  --font-size-card-title: 16px;
+  --line-height-card-title: 23px;
+  --font-weight-card-title: var(--font-weight-semibold);
+
+  --font-size-body: 16px;
+  --line-height-body: 24px;
+  --font-weight-body: var(--font-weight-regular);
+
+  --font-size-ui: 14px;
+  --line-height-ui: 20px;
+  --font-weight-ui: var(--font-weight-regular);
+
+  --font-size-button: 14px;
+  --line-height-button: 20px;
+  --font-weight-button: var(--font-weight-semibold);
+
+  --font-size-navigation: 13px;
+  --line-height-navigation: 18px;
+  --font-weight-navigation: var(--font-weight-medium);
+
+  --font-size-caption: 13px;
+  --line-height-caption: 18px;
+  --font-weight-caption: var(--font-weight-regular);
+
+  --font-size-small: 12px;
+  --line-height-small: 16px;
+  --font-weight-small: var(--font-weight-regular);
+
+  /* Special single-line elements */
+  --line-height-icon: 1;
+  --line-height-none: 0;
+
+  /* Letter spacing */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-uppercase: 0.04em;
+
+  /* 4px spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+}
+
+html {
+  font-family: var(--font-family-ui);
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-family-ui);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+  letter-spacing: var(--letter-spacing-normal);
+}
+
+button,
+input,
+select,
+textarea,
+option {
+  font-family: inherit;
+}
+
+button {
+  font-size: var(--font-size-button);
+  font-weight: var(--font-weight-button);
+  line-height: var(--line-height-button);
+}
+
+input,
+select {
+  font-size: var(--font-size-ui);
+  font-weight: var(--font-weight-ui);
+  line-height: var(--line-height-ui);
+}
+
+textarea {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+}
+
+strong,
+b {
+  font-weight: var(--font-weight-bold);
+}
+
+.text-display {
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-display);
+  line-height: var(--line-height-display);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.text-page-title {
+  font-size: var(--font-size-page-title);
+  font-weight: var(--font-weight-page-title);
+  line-height: var(--line-height-page-title);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.text-section-title {
+  font-size: var(--font-size-section-title);
+  font-weight: var(--font-weight-section-title);
+  line-height: var(--line-height-section-title);
+}
+
+.text-card-title {
+  font-size: var(--font-size-card-title);
+  font-weight: var(--font-weight-card-title);
+  line-height: var(--line-height-card-title);
+}
+
+.text-body {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+}
+
+.text-ui {
+  font-size: var(--font-size-ui);
+  font-weight: var(--font-weight-ui);
+  line-height: var(--line-height-ui);
+}
+
+.text-caption {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-caption);
+  line-height: var(--line-height-caption);
+}
+
+.text-small {
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-small);
+  line-height: var(--line-height-small);
+}
+
+@media (max-width: 560px) {
+  :root {
+    --font-size-page-title: 26px;
+    --line-height-page-title: 32px;
+  }
+}

@@ -97,12 +97,19 @@ export function TarotCardPicker({
               </button>
 
               <button
-                className="card-option__meaning"
+                className={`card-option__meaning${
+                  hasPersonalMeaning ? " is-recorded" : ""
+                }`}
                 type="button"
-                aria-label={`编辑${card.nameZh}的个人牌意`}
-                onClick={() => onOpenPersonalMeaning(card.cardId)}
+                aria-label={`查看${card.nameZh}的牌意记录${
+                  hasPersonalMeaning ? "，已有记录" : ""
+                }`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onOpenPersonalMeaning(card.cardId);
+                }}
               >
-                {hasPersonalMeaning ? "个人牌意 · 已有笔记" : "个人牌意"}
+                我的牌意
               </button>
             </div>
           );

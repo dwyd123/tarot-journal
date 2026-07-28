@@ -188,6 +188,7 @@ export function normalizeStoredTarotCase(
     question: value.question,
     deckName: optionalStoredText(value.deckName),
     overallInterpretation: value.overallInterpretation,
+    background: optionalStoredText(value.background),
     advice: optionalStoredText(value.advice),
     followUp,
     reviewNotes,

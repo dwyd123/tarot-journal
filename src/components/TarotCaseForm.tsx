@@ -11,6 +11,7 @@ export interface TarotCaseFormValues {
   overallInterpretation: string;
   querentCode?: string;
   category?: CaseCategory;
+  background?: string;
   advice?: string;
   followUp?: string;
   reviewNotes?: string;
@@ -25,6 +26,7 @@ interface TarotCaseFormProps {
   templateName: string;
   completedPositionCount: number;
   totalPositionCount: number;
+  onDirtyChange: (isDirty: boolean) => void;
   onSave: (values: TarotCaseFormValues) => TarotCaseFormSubmitResult;
 }
 
@@ -40,6 +42,7 @@ function getTodayInLocalTime(): string {
 const EMPTY_OPTIONAL_VALUES: OptionalCaseValues = {
   querentCode: "",
   category: "",
+  background: "",
   advice: "",
   followUp: "",
   reviewNotes: "",
@@ -50,6 +53,7 @@ export function TarotCaseForm({
   templateName,
   completedPositionCount,
   totalPositionCount,
+  onDirtyChange,
   onSave,
 }: TarotCaseFormProps) {
   const [readingDate, setReadingDate] = useState(getTodayInLocalTime);
@@ -95,6 +99,7 @@ export function TarotCaseForm({
       overallInterpretation,
       querentCode: optionalValues.querentCode,
       category: optionalValues.category || undefined,
+      background: optionalValues.background,
       advice: optionalValues.advice,
       followUp: optionalValues.followUp,
       reviewNotes: optionalValues.reviewNotes,
@@ -118,7 +123,12 @@ export function TarotCaseForm({
         <p>标题和系统信息会在保存时自动生成。</p>
       </div>
 
-      <form className="case-form" noValidate onSubmit={handleSubmit}>
+      <form
+        className="case-form"
+        noValidate
+        onChangeCapture={() => onDirtyChange(true)}
+        onSubmit={handleSubmit}
+      >
         <div className="case-auto-info" aria-label="案例自动信息">
           <label className="form-field">
             <span>

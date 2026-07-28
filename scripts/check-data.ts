@@ -171,6 +171,7 @@ const updatedCase = createUpdatedTarotCase(originalCase, {
   readingDate: "2026-01-02",
   question: "更新后的问题",
   overallInterpretation: "更新后的解读",
+  background: "更新后的背景",
   followUp: "已有反馈",
   reviewNotes: "已有复盘",
   selections: {
@@ -186,6 +187,7 @@ if (
   updatedCase.createdAt !== originalCase.createdAt ||
   updatedCase.updatedAt === originalCase.updatedAt ||
   updatedCase.title !== "更新后的问题" ||
+  updatedCase.background !== "更新后的背景" ||
   updatedCase.status !== "已复盘" ||
   updatedCase.spreadSnapshot.positions[0]?.cardId !== "major-magician" ||
   updatedCase.spreadSnapshot.positions[0]?.orientation !== "逆位"
@@ -204,6 +206,7 @@ const normalizedLegacyCase = normalizeStoredTarotCase({
 if (
   !normalizedLegacyCase ||
   normalizedLegacyCase.category !== "事业" ||
+  normalizedLegacyCase.background !== undefined ||
   normalizedLegacyCase.tags.length !== 0 ||
   normalizedLegacyCase.isFavorite !== false
 ) {
@@ -255,6 +258,6 @@ console.log("- 旧问题分类兼容规则：通过");
 console.log("- 旧个人牌意兼容规则：通过");
 console.log("- 新版个人牌意主题结构：通过");
 console.log("- 案例状态自动计算规则：通过");
-console.log("- 案例编辑保留与更新规则：通过");
-console.log("- 旧案例可选字段兼容规则：通过");
+console.log("- 案例编辑保留、背景与更新规则：通过");
+console.log("- 旧案例背景、收藏等可选字段兼容规则：通过");
 console.log("- 案例列表排序规则：通过");

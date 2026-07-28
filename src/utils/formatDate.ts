@@ -13,3 +13,13 @@ export function formatDateTime(value: string): string {
     minute: "2-digit",
   }).format(date);
 }
+
+export function formatReadingDate(value: string): string {
+  const [year, month, day] = value.split("-").map(Number);
+
+  if (!year || !month || !day) {
+    return value;
+  }
+
+  return `${year}年${month}月${day}日`;
+}

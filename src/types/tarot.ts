@@ -113,6 +113,8 @@ export interface TarotCaseBase {
   question: string;
   deckName?: string;
   overallInterpretation: string;
+  /** 咨询者背景、事件上下文或解读时需要参考的信息。 */
+  background?: string;
   advice?: string;
   followUp?: string;
   reviewNotes?: string;
